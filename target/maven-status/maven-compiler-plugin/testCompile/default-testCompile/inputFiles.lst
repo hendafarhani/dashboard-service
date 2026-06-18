@@ -1,7 +1,0 @@
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/DashboardServiceApplicationTests.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/configuration/WebSocketConfigurationTest.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/integration/DashboardServiceIntegrationTest.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/kafka/DashboardEventHandlerTest.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/service/serviceimpl/DashboardEventProcessorImplTest.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/service/serviceimpl/DashboardStreamingServiceImplTest.java
-/Users/hendafarhani/Documents/microGo/dashboard-service/src/test/java/com/microgo/dashboard_service/service/serviceimpl/EventProjectionRouterImplTest.java
