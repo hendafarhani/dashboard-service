@@ -1,4 +1,4 @@
-package com.microgo.dashboard_service.model;
+package com.microgo.dashboard_service.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -8,6 +8,8 @@ public record RideDashboardMessage(
         String rideRequestIdentifier,
         String requesterId,
         String riderId,
+        String providerIdentifier,
+        String driverDisplayId,
         String rideStatus,
         String sourceTable,
         JsonNode payload,

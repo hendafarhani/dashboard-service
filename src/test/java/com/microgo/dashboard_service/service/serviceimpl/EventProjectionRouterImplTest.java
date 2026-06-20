@@ -5,7 +5,7 @@ import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
 import com.microgo.dashboard_service.enums.RideRequestEventType;
 import com.microgo.dashboard_service.mapper.DashboardProjectionMapper;
-import com.microgo.dashboard_service.model.DashboardProjection;
+import com.microgo.dashboard_service.domain.DashboardProjection;
 import com.microgo.dashboard_service.repository.RideRequestDriverOfferProjection;
 import com.microgo.dashboard_service.repository.RideRequestDriverOfferRepository;
 import com.microgo.dashboard_service.repository.RideRequestRepository;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -82,6 +83,7 @@ class EventProjectionRouterImplTest {
         assertThat(projection.data().get("identifier").asText()).isEqualTo("ride-21");
         assertThat(projection.data().get("status").asText()).isEqualTo("ACCEPTED");
         assertThat(projection.data().get("acceptedRiderIdentifier").asText()).isEqualTo("rider-21");
+        assertThat(projection.data().get("providerIdentifier").asText()).isEqualTo("rider-21");
     }
 
     @Test
@@ -103,8 +105,8 @@ class EventProjectionRouterImplTest {
             }
 
             @Override
-            public OffsetDateTime getNotifiedAt() {
-                return OffsetDateTime.parse("2026-06-18T10:00:00Z");
+            public LocalDateTime getNotifiedAt() {
+                return LocalDateTime.parse("2026-06-18T10:00:00");
             }
 
             @Override
@@ -113,13 +115,23 @@ class EventProjectionRouterImplTest {
             }
 
             @Override
-            public OffsetDateTime getRespondedAt() {
-                return OffsetDateTime.parse("2026-06-18T10:02:00Z");
+            public LocalDateTime getRespondedAt() {
+                return LocalDateTime.parse("2026-06-18T10:02:00");
             }
 
             @Override
             public String getRiderIdentifier() {
                 return "rider-21";
+            }
+
+            @Override
+            public String getDriverIdentifier() {
+                return "rider-21";
+            }
+
+            @Override
+            public String getDriverDisplayId() {
+                return "DRV-RIDER-21";
             }
         };
 
@@ -132,6 +144,7 @@ class EventProjectionRouterImplTest {
 
         assertThat(result.sourceTable()).isEqualTo("RIDE_REQUEST_DRIVER_OFFER");
         assertThat(result.data().get("riderIdentifier").asText()).isEqualTo("rider-21");
+        assertThat(result.data().get("providerIdentifier").asText()).isEqualTo("rider-21");
         assertThat(result.data().get("status").asText()).isEqualTo("DECLINED");
         assertThat(result.data().get("notificationRound").asInt()).isEqualTo(2);
     }

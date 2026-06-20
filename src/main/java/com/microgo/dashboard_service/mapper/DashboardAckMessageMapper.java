@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.mapper;
 
-import com.microgo.dashboard_service.model.DashboardAckMessage;
+import com.microgo.dashboard_service.domain.DashboardAckMessage;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;

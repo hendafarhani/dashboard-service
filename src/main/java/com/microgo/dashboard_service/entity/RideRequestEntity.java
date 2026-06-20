@@ -25,8 +25,19 @@ public class RideRequestEntity {
     private String status;
 
     @Column(name = "accepted_rider_identifier")
-    private String acceptedRiderIdentifier;
+    private String acceptedDriverIdentifier;
+
+    @Column(name = "accepted_driver_display_id")
+    private String acceptedDriverDisplayId;
 
     @Column(name = "accepted_at")
     private OffsetDateTime acceptedAt;
+
+    public String getAcceptedRiderIdentifier() {
+        return acceptedDriverIdentifier;
+    }
+
+    public void setAcceptedRiderIdentifier(String acceptedRiderIdentifier) {
+        this.acceptedDriverIdentifier = acceptedRiderIdentifier;
+    }
 }

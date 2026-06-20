@@ -32,7 +32,7 @@ public class EventOutboxEntity {
     private String requesterId;
 
     @Column(name = "rider_id")
-    private String riderId;
+    private String driverIdentifier;
 
     @Lob
     @Column(name = "payload", nullable = false, columnDefinition = "LONGTEXT")
@@ -46,4 +46,12 @@ public class EventOutboxEntity {
 
     @Column(name = "processed_at")
     private OffsetDateTime processedAt;
+
+    public String getRiderId() {
+        return driverIdentifier;
+    }
+
+    public void setRiderId(String riderId) {
+        this.driverIdentifier = riderId;
+    }
 }

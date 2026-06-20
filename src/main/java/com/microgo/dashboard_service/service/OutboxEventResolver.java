@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.service;
 
-import com.microgo.dashboard_service.model.ResolvedDashboardEvent;
+import com.microgo.dashboard_service.domain.ResolvedDashboardEvent;
 
 import java.util.Optional;
 

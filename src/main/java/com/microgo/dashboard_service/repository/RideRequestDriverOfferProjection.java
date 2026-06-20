@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.repository;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 public interface RideRequestDriverOfferProjection {
 
@@ -10,11 +10,15 @@ public interface RideRequestDriverOfferProjection {
 
     Integer getNotificationRound();
 
-    OffsetDateTime getNotifiedAt();
+    LocalDateTime getNotifiedAt();
 
     String getStatus();
 
-    OffsetDateTime getRespondedAt();
+    LocalDateTime getRespondedAt();
 
     String getRiderIdentifier();
+
+    String getDriverIdentifier();
+
+    String getDriverDisplayId();
 }

@@ -1,9 +1,9 @@
-package com.microgo.dashboard_service.service.serviceimpl;
+package com.microgo.dashboard_service.kafka.publisher.impl;
 
-import com.microgo.dashboard_service.configuration.DashboardServiceProperties;
+import com.microgo.dashboard_service.kafka.configuration.DashboardServiceProperties;
 import com.microgo.dashboard_service.mapper.DashboardAckMessageMapper;
-import com.microgo.dashboard_service.model.DashboardAckMessage;
-import com.microgo.dashboard_service.service.DashboardAckPublisher;
+import com.microgo.dashboard_service.domain.DashboardAckMessage;
+import com.microgo.dashboard_service.kafka.publisher.DashboardAckPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -1,4 +1,4 @@
-package com.microgo.dashboard_service.model;
+package com.microgo.dashboard_service.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;

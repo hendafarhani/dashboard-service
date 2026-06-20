@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.enums.RideRequestEventType;
 import com.microgo.dashboard_service.mapper.RideDashboardMessageMapper;
-import com.microgo.dashboard_service.model.DashboardProjection;
-import com.microgo.dashboard_service.model.ResolvedDashboardEvent;
-import com.microgo.dashboard_service.model.RideDashboardMessage;
-import com.microgo.dashboard_service.service.DashboardAckPublisher;
+import com.microgo.dashboard_service.domain.DashboardProjection;
+import com.microgo.dashboard_service.domain.ResolvedDashboardEvent;
+import com.microgo.dashboard_service.domain.RideDashboardMessage;
+import com.microgo.dashboard_service.kafka.publisher.DashboardAckPublisher;
 import com.microgo.dashboard_service.service.DashboardStreamingService;
 import com.microgo.dashboard_service.service.EventProjectionRouter;
 import com.microgo.dashboard_service.service.OutboxEventResolver;
@@ -51,10 +51,14 @@ class DashboardEventProcessorImplTest {
         EventOutboxEntity event = eventOutbox("REQUEST_ACCEPTED");
         ObjectNode data = new ObjectMapper().createObjectNode();
         data.put("status", "ACCEPTED");
+        data.put("acceptedDriverIdentifier", "rider-7");
+        data.put("providerIdentifier", "rider-7");
         outboxEventResolver.resolvedEvent = new ResolvedDashboardEvent(
                 event,
                 RideRequestEventType.REQUEST_ACCEPTED,
-                new ObjectMapper().createObjectNode().put("rideStatus", "ACCEPTED")
+                new ObjectMapper().createObjectNode()
+                        .put("rideStatus", "ACCEPTED")
+                        .put("driverIdentifier", "rider-7")
         );
         eventProjectionRouter.projection = new DashboardProjection("RIDE_REQUEST", data);
 
@@ -65,6 +69,7 @@ class DashboardEventProcessorImplTest {
         assertThat(processed).isTrue();
         assertThat(dashboardStreamingService.messages).hasSize(1);
         assertThat(dashboardStreamingService.messages.getFirst().sourceTable()).isEqualTo("RIDE_REQUEST");
+        assertThat(dashboardStreamingService.messages.getFirst().providerIdentifier()).isEqualTo("rider-7");
         assertThat(dashboardAckPublisher.acknowledgedEventIds).containsExactly(7L);
     }
 
@@ -88,7 +93,7 @@ class DashboardEventProcessorImplTest {
         event.setRideRequestId(70L);
         event.setRideRequestIdentifier("ride-7");
         event.setRequesterId("user-7");
-        event.setRiderId("rider-7");
+        event.setRiderId(null);
         event.setPayload("{\"rideStatus\":\"ACCEPTED\"}");
         return event;
     }

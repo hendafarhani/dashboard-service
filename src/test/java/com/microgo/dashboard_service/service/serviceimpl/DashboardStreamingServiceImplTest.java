@@ -2,7 +2,7 @@ package com.microgo.dashboard_service.service.serviceimpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.microgo.dashboard_service.model.RideDashboardMessage;
+import com.microgo.dashboard_service.domain.RideDashboardMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
@@ -33,6 +33,8 @@ class DashboardStreamingServiceImplTest {
                 "REQUEST_CREATED",
                 "ride-7",
                 "user-7",
+                null,
+                null,
                 null,
                 "PENDING",
                 "RIDE_REQUEST",

@@ -1,12 +1,11 @@
 package com.microgo.dashboard_service.service.serviceimpl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.enums.RideRequestEventType;
-import com.microgo.dashboard_service.model.OutboxEventEnvelope;
-import com.microgo.dashboard_service.model.ResolvedDashboardEvent;
+import com.microgo.dashboard_service.domain.OutboxEventEnvelope;
+import com.microgo.dashboard_service.domain.ResolvedDashboardEvent;
 import com.microgo.dashboard_service.repository.EventOutboxRepository;
 import com.microgo.dashboard_service.service.OutboxEventResolver;
 import lombok.RequiredArgsConstructor;

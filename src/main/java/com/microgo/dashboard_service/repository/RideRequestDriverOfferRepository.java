@@ -16,11 +16,13 @@ public interface RideRequestDriverOfferRepository extends JpaRepository<RideRequ
                    offer.notified_at as notifiedAt,
                    offer.status as status,
                    offer.responded_at as respondedAt,
-                   rider.identifier as riderIdentifier
+                   rider.identifier as riderIdentifier,
+                   coalesce(rider.driver_identifier, rider.identifier) as driverIdentifier,
+                   rider.driver_display_id as driverDisplayId
             from ride_request_driver_offer offer
-            join riders rider on rider.id = offer.rider_id
+            join driver rider on rider.id = offer.rider_id
             where offer.ride_request_id = :rideRequestId
-              and rider.identifier = :riderIdentifier
+              and coalesce(rider.driver_identifier, rider.identifier) = :riderIdentifier
             """, nativeQuery = true)
     Optional<RideRequestDriverOfferProjection> findProjectionByRideRequestIdAndRiderIdentifier(
             @Param("rideRequestId") Long rideRequestId,

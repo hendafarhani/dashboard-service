@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.service;
 
-import com.microgo.dashboard_service.model.RideDashboardMessage;
+import com.microgo.dashboard_service.domain.RideDashboardMessage;
 
 public interface DashboardStreamingService {
 

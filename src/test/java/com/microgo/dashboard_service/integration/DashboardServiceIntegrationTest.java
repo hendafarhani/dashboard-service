@@ -2,10 +2,12 @@ package com.microgo.dashboard_service.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
+import com.microgo.dashboard_service.entity.RideRequestDriverOfferEntity;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
-import com.microgo.dashboard_service.model.DashboardAckMessage;
-import com.microgo.dashboard_service.model.RideDashboardMessage;
+import com.microgo.dashboard_service.domain.DashboardAckMessage;
+import com.microgo.dashboard_service.domain.RideDashboardMessage;
 import com.microgo.dashboard_service.repository.EventOutboxRepository;
+import com.microgo.dashboard_service.repository.RideRequestDriverOfferRepository;
 import com.microgo.dashboard_service.repository.RideRequestRepository;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -75,6 +78,12 @@ class DashboardServiceIntegrationTest {
     private RideRequestRepository rideRequestRepository;
 
     @Autowired
+    private RideRequestDriverOfferRepository rideRequestDriverOfferRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
@@ -108,6 +117,7 @@ class DashboardServiceIntegrationTest {
         rideRequest.setIdentifier("ride-dashboard-1");
         rideRequest.setStatus("ACCEPTED");
         rideRequest.setAcceptedRiderIdentifier("rider-dashboard-1");
+        rideRequest.setAcceptedDriverDisplayId("DRV-RIDER-DASHBOARD-1");
         rideRequest.setAcceptedAt(OffsetDateTime.parse("2026-06-18T10:01:00Z"));
         rideRequestRepository.save(rideRequest);
 
@@ -117,9 +127,9 @@ class DashboardServiceIntegrationTest {
         outboxEvent.setRideRequestId(42L);
         outboxEvent.setRideRequestIdentifier("ride-dashboard-1");
         outboxEvent.setRequesterId("user-dashboard-1");
-        outboxEvent.setRiderId("rider-dashboard-1");
+        outboxEvent.setRiderId(null);
         outboxEvent.setPayload("""
-                {"eventType":"REQUEST_ACCEPTED","rideStatus":"ACCEPTED","rideRequestId":42,"rideRequestIdentifier":"ride-dashboard-1","requesterId":"user-dashboard-1","riderId":"rider-dashboard-1"}
+                {"eventType":"REQUEST_ACCEPTED","rideStatus":"ACCEPTED","rideRequestId":42,"rideRequestIdentifier":"ride-dashboard-1","requesterId":"user-dashboard-1","driverIdentifier":"rider-dashboard-1","riderId":"rider-dashboard-1"}
                 """);
         outboxEvent.setCreatedAt(OffsetDateTime.parse("2026-06-18T10:00:00Z"));
         outboxEvent.setUpdatedAt(OffsetDateTime.parse("2026-06-18T10:00:00Z"));
@@ -157,9 +167,13 @@ class DashboardServiceIntegrationTest {
 
         assertThat(received).isNotNull();
         assertThat(received.eventId()).isEqualTo(101L);
+        assertThat(received.riderId()).isEqualTo("rider-dashboard-1");
+        assertThat(received.providerIdentifier()).isEqualTo("rider-dashboard-1");
+        assertThat(received.driverDisplayId()).isEqualTo("DRV-RIDER-DASHBOARD-1");
         assertThat(received.sourceTable()).isEqualTo("RIDE_REQUEST");
         assertThat(received.data().get("status").asText()).isEqualTo("ACCEPTED");
         assertThat(received.data().get("acceptedRiderIdentifier").asText()).isEqualTo("rider-dashboard-1");
+        assertThat(received.data().get("providerIdentifier").asText()).isEqualTo("rider-dashboard-1");
 
         DashboardAckMessage ackMessage = objectMapper.readValue(ackRecord.value(), DashboardAckMessage.class);
         assertThat(ackMessage.eventId()).isEqualTo(101L);
@@ -168,6 +182,43 @@ class DashboardServiceIntegrationTest {
 
         session.disconnect();
         stompClient.stop();
+    }
+
+    @Test
+    void readsDriverOfferProjectionFromCanonicalDriverTable() {
+        jdbcTemplate.execute("""
+                create table if not exists driver (
+                    id bigint primary key,
+                    identifier varchar(255),
+                    driver_identifier varchar(255),
+                    driver_display_id varchar(255)
+                )
+                """);
+        jdbcTemplate.update(
+                "insert into driver (id, identifier, driver_identifier, driver_display_id) values (?, ?, ?, ?)",
+                7L,
+                "legacy-rider-7",
+                "driver-7",
+                "DRV-DRIVER-7");
+
+        RideRequestDriverOfferEntity offer = new RideRequestDriverOfferEntity();
+        offer.setId(70L);
+        offer.setRideRequestId(42L);
+        offer.setRiderId(7L);
+        offer.setNotificationRound(1);
+        offer.setNotifiedAt(OffsetDateTime.parse("2026-06-18T10:00:00Z"));
+        offer.setStatus("NOTIFIED");
+        rideRequestDriverOfferRepository.saveAndFlush(offer);
+
+        var projection = rideRequestDriverOfferRepository
+                .findProjectionByRideRequestIdAndRiderIdentifier(42L, "driver-7");
+
+        assertThat(projection).isPresent();
+        assertThat(projection.orElseThrow().getRiderIdentifier()).isEqualTo("legacy-rider-7");
+        assertThat(projection.orElseThrow().getDriverIdentifier()).isEqualTo("driver-7");
+        assertThat(projection.orElseThrow().getDriverDisplayId()).isEqualTo("DRV-DRIVER-7");
+        assertThat(projection.orElseThrow().getNotifiedAt())
+                .isEqualTo(OffsetDateTime.parse("2026-06-18T10:00:00Z").toLocalDateTime());
     }
 
     private ConsumerRecord<String, String> consumeOneAck(String expectedKey) {

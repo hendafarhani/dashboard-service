@@ -1,4 +1,4 @@
-package com.microgo.dashboard_service.model;
+package com.microgo.dashboard_service.domain;
 
 import java.time.OffsetDateTime;
 

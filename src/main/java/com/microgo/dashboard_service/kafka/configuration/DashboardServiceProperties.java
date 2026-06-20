@@ -1,4 +1,4 @@
-package com.microgo.dashboard_service.configuration;
+package com.microgo.dashboard_service.kafka.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

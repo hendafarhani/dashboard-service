@@ -4,7 +4,7 @@ import com.microgo.dashboard_service.mapper.DashboardProjectionMapper;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
 import com.microgo.dashboard_service.enums.RideRequestEventType;
-import com.microgo.dashboard_service.model.DashboardProjection;
+import com.microgo.dashboard_service.domain.DashboardProjection;
 import com.microgo.dashboard_service.repository.RideRequestDriverOfferProjection;
 import com.microgo.dashboard_service.repository.RideRequestDriverOfferRepository;
 import com.microgo.dashboard_service.repository.RideRequestRepository;

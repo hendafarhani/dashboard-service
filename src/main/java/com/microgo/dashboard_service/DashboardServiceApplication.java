@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service;
 
-import com.microgo.dashboard_service.configuration.DashboardServiceProperties;
+import com.microgo.dashboard_service.kafka.configuration.DashboardServiceProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.service.serviceimpl;
 
-import com.microgo.dashboard_service.model.RideDashboardMessage;
+import com.microgo.dashboard_service.domain.RideDashboardMessage;
 import com.microgo.dashboard_service.service.DashboardStreamingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
