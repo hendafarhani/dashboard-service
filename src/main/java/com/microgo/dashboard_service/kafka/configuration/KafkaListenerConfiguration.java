@@ -29,9 +29,11 @@ public class KafkaListenerConfiguration {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> dashboardEventListenerContainerFactory(
-            ConsumerFactory<String, String> dashboardEventConsumerFactory) {
+            ConsumerFactory<String, String> dashboardEventConsumerFactory,
+            @Value("${dashboard.service.listener.auto-startup:true}") boolean autoStartup) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(dashboardEventConsumerFactory);
+        factory.setAutoStartup(autoStartup);
         return factory;
     }
 }

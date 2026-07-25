@@ -15,8 +15,12 @@ import java.util.Map;
 public class KafkaAdminConfiguration {
 
     @Bean
-    public KafkaAdmin kafkaAdmin(@Value("${kafka.bootstrap-servers}") String bootstrapServers) {
-        return new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers));
+    public KafkaAdmin kafkaAdmin(
+            @Value("${kafka.bootstrap-servers}") String bootstrapServers,
+            @Value("${dashboard.service.admin.auto-create-topics:true}") boolean autoCreateTopics) {
+        KafkaAdmin kafkaAdmin = new KafkaAdmin(Map.of(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers));
+        kafkaAdmin.setAutoCreate(autoCreateTopics);
+        return kafkaAdmin;
     }
 
     @Bean
