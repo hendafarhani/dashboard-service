@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -62,6 +64,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class DashboardServiceIT {
 
+    private static final int eventTopicPartitionCount = 3;
+
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4");
 
@@ -88,6 +92,12 @@ class DashboardServiceIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
+    @Value("${dashboard.service.listener-id}")
+    private String listenerId;
 
     @Value("${dashboard.service.event-topic}")
     private String eventTopic;
@@ -157,6 +167,10 @@ class DashboardServiceIT {
                 receivedMessages.add((RideDashboardMessage) payload);
             }
         });
+
+        ContainerTestUtils.waitForAssignment(
+                kafkaListenerEndpointRegistry.getListenerContainer(listenerId),
+                eventTopicPartitionCount);
 
         kafkaTemplate.send(eventTopic, "ride-dashboard-1", """
                 {"eventId":101,"eventType":"REQUEST_ACCEPTED","eventTimestamp":"2026-06-18T10:00:00Z","rideRequestIdentifier":"ride-dashboard-1","requesterId":"user-dashboard-1","riderId":"rider-dashboard-1","rideStatus":"ACCEPTED","payload":{"rideStatus":"ACCEPTED"}}
