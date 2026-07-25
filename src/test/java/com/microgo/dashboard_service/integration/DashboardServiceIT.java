@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -139,7 +138,6 @@ class DashboardServiceIT {
         WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(List.of(
                 new WebSocketTransport(new StandardWebSocketClient())
         )));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         StompSession session = stompClient
                 .connectAsync("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {
