@@ -60,7 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         }
 )
 @Testcontainers(disabledWithoutDocker = true)
-class DashboardServiceIntegrationTest {
+class DashboardServiceIT {
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4");
