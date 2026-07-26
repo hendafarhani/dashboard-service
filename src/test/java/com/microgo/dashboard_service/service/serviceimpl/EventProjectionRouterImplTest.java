@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.service.serviceimpl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
 import com.microgo.dashboard_service.enums.RideRequestEventType;

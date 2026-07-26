@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.mapper;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.domain.DashboardProjection;
 import com.microgo.dashboard_service.domain.ResolvedDashboardEvent;

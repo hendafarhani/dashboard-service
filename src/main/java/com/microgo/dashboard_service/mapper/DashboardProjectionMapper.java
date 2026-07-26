@@ -1,7 +1,7 @@
 package com.microgo.dashboard_service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
 import com.microgo.dashboard_service.domain.DashboardProjection;
 import com.microgo.dashboard_service.repository.RideRequestDriverOfferProjection;

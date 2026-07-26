@@ -20,7 +20,7 @@ public class DashboardAckPublisherImpl implements DashboardAckPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final DashboardServiceProperties properties;
-    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    private final tools.jackson.databind.ObjectMapper objectMapper;
     private final DashboardAckMessageMapper dashboardAckMessageMapper;
 
     @Value("${spring.application.name}")
@@ -48,7 +48,7 @@ public class DashboardAckPublisherImpl implements DashboardAckPublisher {
         return String.valueOf(eventId);
     }
 
-    private String serialize(DashboardAckMessage ackMessage) throws com.fasterxml.jackson.core.JsonProcessingException {
+    private String serialize(DashboardAckMessage ackMessage) {
         return objectMapper.writeValueAsString(ackMessage);
     }
 }
