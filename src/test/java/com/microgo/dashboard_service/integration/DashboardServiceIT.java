@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.microgo.dashboard_service.entity.EventOutboxEntity;
 import com.microgo.dashboard_service.entity.RideRequestDriverOfferEntity;
 import com.microgo.dashboard_service.entity.RideRequestEntity;
@@ -19,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -60,7 +62,9 @@ import static org.assertj.core.api.Assertions.assertThat;
         }
 )
 @Testcontainers(disabledWithoutDocker = true)
-class DashboardServiceIntegrationTest {
+class DashboardServiceIT {
+
+    private static final int eventTopicPartitionCount = 3;
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4");
@@ -88,6 +92,12 @@ class DashboardServiceIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
+    @Value("${dashboard.service.listener-id}")
+    private String listenerId;
 
     @Value("${dashboard.service.event-topic}")
     private String eventTopic;
@@ -139,7 +149,7 @@ class DashboardServiceIntegrationTest {
         WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(List.of(
                 new WebSocketTransport(new StandardWebSocketClient())
         )));
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        stompClient.setMessageConverter(new JacksonJsonMessageConverter());
 
         StompSession session = stompClient
                 .connectAsync("http://localhost:" + port + "/ws", new StompSessionHandlerAdapter() {
@@ -157,6 +167,10 @@ class DashboardServiceIntegrationTest {
                 receivedMessages.add((RideDashboardMessage) payload);
             }
         });
+
+        ContainerTestUtils.waitForAssignment(
+                kafkaListenerEndpointRegistry.getListenerContainer(listenerId),
+                eventTopicPartitionCount);
 
         kafkaTemplate.send(eventTopic, "ride-dashboard-1", """
                 {"eventId":101,"eventType":"REQUEST_ACCEPTED","eventTimestamp":"2026-06-18T10:00:00Z","rideRequestIdentifier":"ride-dashboard-1","requesterId":"user-dashboard-1","riderId":"rider-dashboard-1","rideStatus":"ACCEPTED","payload":{"rideStatus":"ACCEPTED"}}
@@ -240,6 +254,7 @@ class DashboardServiceIntegrationTest {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "dashboard-ack-" + UUID.randomUUID());
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return props;

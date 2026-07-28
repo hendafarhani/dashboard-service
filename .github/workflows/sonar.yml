@@ -1,0 +1,24 @@
+name: Sonar Dashboard Service
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sonar:
+    # Run only when SONAR_TOKEN is actually available: pushes, manual runs, and
+    # same-repo PRs. Fork PRs run in an unprivileged context with no secrets, so
+    # skip them explicitly instead of failing on an empty token.
+    if: >
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    uses: hendafarhani/microGo/.github/workflows/sonar-analysis.yml@605ffc6677d5ae5df8d7b4500f30f2256705f107
+    with:
+      java_version: "21"
+      sonar_project_key: "hendafarhani_dashboard-service"
+      sonar_organization: "hendafarhani"
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
