@@ -99,10 +99,10 @@ class DashboardServiceIT {
     @Value("${dashboard.service.listener-id}")
     private String listenerId;
 
-    @Value("${dashboard.service.event-topic}")
+    @Value("${microgo.topics.ride-request-events}")
     private String eventTopic;
 
-    @Value("${dashboard.service.ack-topic}")
+    @Value("${microgo.topics.ride-request-events-acks}")
     private String ackTopic;
 
     @DynamicPropertySource
