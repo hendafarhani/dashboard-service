@@ -3,6 +3,7 @@ package com.microgo.dashboard_service.service.serviceimpl;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 import com.microgo.dashboard_service.domain.RideDashboardMessage;
+import com.microgo.dashboard_service.service.DashboardStreamingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
@@ -44,7 +45,8 @@ class DashboardStreamingServiceImplTest {
 
         dashboardStreamingService.streamRideEvent(message);
 
-        assertThat(messagingTemplate.destination).isEqualTo("/topic/ride-requests/ride-7");
+        assertThat(messagingTemplate.destination)
+                .isEqualTo(DashboardStreamingService.RIDE_REQUESTS_DESTINATION_PREFIX + "/ride-7");
         assertThat(messagingTemplate.payload).isEqualTo(message);
     }
 
