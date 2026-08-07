@@ -1,28 +1,26 @@
 package com.microgo.dashboard_service.kafka.configuration;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * This service's own Kafka identity and tuning.
- *
- * <p>Topic names deliberately live in {@link KafkaTopicProperties} instead.
- * Everything here must DIFFER from other services - Kafka delivers each message
- * to exactly one member of a consumer group, so sharing consumerGroupId with
- * another service would make Kafka see one application with two instances and
- * split the stream between them.
- */
+@Validated
 @ConfigurationProperties(prefix = "dashboard.service")
 public record DashboardServiceProperties(
+
+        @NotNull(message = "dashboard.service.consumer-group-id must be set")
         String consumerGroupId,
+
+        @NotNull(message = "dashboard.service.listener-id must be set")
         String listenerId,
+
+        @NotNull(message = "dashboard.service.event-topic-partitions must be set")
         Integer eventTopicPartitions,
+
+        @NotNull(message = "dashboard.service.ack-topic-partitions must be set")
         Integer ackTopicPartitions,
+
+        @NotNull(message = "dashboard.service.replication-factor must be set")
         Short replicationFactor
 ) {
-
-    public DashboardServiceProperties {
-        eventTopicPartitions = eventTopicPartitions == null ? 3 : eventTopicPartitions;
-        ackTopicPartitions = ackTopicPartitions == null ? 3 : ackTopicPartitions;
-        replicationFactor = replicationFactor == null ? 1 : replicationFactor;
-    }
 }

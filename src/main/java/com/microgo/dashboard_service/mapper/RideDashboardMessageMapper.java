@@ -37,7 +37,7 @@ public class RideDashboardMessageMapper {
                 resolvedDriverIdentifier,
                 resolvedDriverIdentifier,
                 resolvedDriverDisplayId,
-                payload.path("rideStatus").asText(null),
+                payload.path("rideStatus").asString(null),
                 projection.sourceTable(),
                 payload,
                 projectionData
@@ -48,7 +48,7 @@ public class RideDashboardMessageMapper {
         if (node == null) {
             return null;
         }
-        String value = node.path(fieldName).asText(null);
+        String value = node.path(fieldName).asString(null);
         return StringUtils.hasText(value) ? value : null;
     }
 
