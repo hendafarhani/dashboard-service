@@ -12,20 +12,6 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Guards the WebSocket wire format of {@link RideDashboardMessage}.
- *
- * <p>Its {@code payload} and {@code data} fields are {@link JsonNode}s, and the STOMP
- * broker serializes them with Jackson 3. If those fields ever revert to a Jackson 2
- * {@code JsonNode}, Jackson 3 stops recognising them as trees and falls back to its
- * generic rule for unknown objects - call every getter and write the answers. Clients
- * then receive {@code {"array":false,"nodeType":"OBJECT",...}} where the ride data
- * should be. Nothing throws; the payload is simply empty of content.
- *
- * <p>The existing streaming test cannot see this: it stubs {@code convertAndSend}, so
- * no converter ever runs. These assertions deliberately go through the real converter
- * and inspect the bytes that reach the browser.
- */
 class RideDashboardMessageSerializationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
