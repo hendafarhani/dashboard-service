@@ -13,7 +13,7 @@ public class DashboardEventHandler {
 
     @KafkaListener(
             id = "${dashboard.service.listener-id}",
-            topics = "${dashboard.service.event-topic}",
+            topics = "${microgo.topics.ride-request-events}",
             groupId = "${dashboard.service.consumer-group-id}",
             containerFactory = "dashboardEventListenerContainerFactory"
     )

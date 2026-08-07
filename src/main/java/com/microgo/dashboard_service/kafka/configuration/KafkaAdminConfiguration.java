@@ -24,12 +24,12 @@ public class KafkaAdminConfiguration {
     }
 
     @Bean
-    public NewTopic dashboardEventsTopic(DashboardServiceProperties properties) {
-        return new NewTopic(properties.eventTopic(), properties.eventTopicPartitions(), properties.replicationFactor());
+    public NewTopic dashboardEventsTopic(KafkaTopicProperties topics, DashboardServiceProperties properties) {
+        return new NewTopic(topics.rideRequestEvents(), properties.eventTopicPartitions(), properties.replicationFactor());
     }
 
     @Bean
-    public NewTopic dashboardAckTopic(DashboardServiceProperties properties) {
-        return new NewTopic(properties.ackTopic(), properties.ackTopicPartitions(), properties.replicationFactor());
+    public NewTopic dashboardAckTopic(KafkaTopicProperties topics, DashboardServiceProperties properties) {
+        return new NewTopic(topics.rideRequestEventsAcks(), properties.ackTopicPartitions(), properties.replicationFactor());
     }
 }

@@ -1,6 +1,6 @@
 package com.microgo.dashboard_service.kafka.publisher.impl;
 
-import com.microgo.dashboard_service.kafka.configuration.DashboardServiceProperties;
+import com.microgo.dashboard_service.kafka.configuration.KafkaTopicProperties;
 import com.microgo.dashboard_service.mapper.DashboardAckMessageMapper;
 import com.microgo.dashboard_service.domain.DashboardAckMessage;
 import com.microgo.dashboard_service.kafka.publisher.DashboardAckPublisher;
@@ -19,7 +19,7 @@ public class DashboardAckPublisherImpl implements DashboardAckPublisher {
     private static final int SEND_TIMEOUT_SECONDS = 10;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private final DashboardServiceProperties properties;
+    private final KafkaTopicProperties topics;
     private final tools.jackson.databind.ObjectMapper objectMapper;
     private final DashboardAckMessageMapper dashboardAckMessageMapper;
 
@@ -41,7 +41,7 @@ public class DashboardAckPublisherImpl implements DashboardAckPublisher {
     }
 
     private String ackTopic() {
-        return properties.ackTopic();
+        return topics.rideRequestEventsAcks();
     }
 
     private String eventKey(Long eventId) {
