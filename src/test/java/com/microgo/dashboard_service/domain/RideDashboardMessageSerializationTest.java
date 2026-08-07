@@ -17,7 +17,7 @@ class RideDashboardMessageSerializationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void writesJsonNodeFieldsAsJsonTrees() {
+    void writesJsonNodeFieldsAsJsonTrees() throws Exception {
         String json = serializeThroughBrokerConverter(sampleMessage());
         JsonNode wire = objectMapper.readTree(json);
 
