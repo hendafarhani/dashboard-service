@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Topic names, bound from the fleet-wide microgo.topics.* keys defined once in
- * centralized-configuration/application.properties.
+ * centralized-config/application.properties.
  *
  * <p>Separate from {@link DashboardServiceProperties} on purpose. A topic name
  * is an agreement with whoever is on the other end of the channel - here,
